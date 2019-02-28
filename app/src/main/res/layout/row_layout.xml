@@ -7,8 +7,9 @@
     >
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:layout_height="2dp"
+        android:background="?android:attr/listDivider"
+        />
     <TextView
         android:id="@+id/timeView"
         android:layout_width="wrap_content"
@@ -27,9 +28,5 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="70sp"
         android:text="event" />
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
 
 </RelativeLayout>

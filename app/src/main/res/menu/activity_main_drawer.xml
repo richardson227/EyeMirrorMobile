@@ -5,24 +5,24 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/nav_scheduler"
             android:icon="@drawable/ic_date_range_black_24dp"
             android:title="Schedule An Event" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_controller"
             android:icon="@drawable/ic_settings_remote_black_24dp"
             android:title="Mirror Controller" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_notifs"
             android:icon="@drawable/ic_add_alert_black_24dp"
             android:title="Notification Preferences" />
         <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings_black_24dp"
             android:title="Settings" />
 
         <item
-            android:id="@+id/nav_share"
+            android:id="@+id/nav_about"
             android:icon="@drawable/ic_people_black_24dp"
             android:title="About Us" />
     </group>

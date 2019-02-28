@@ -1,5 +1,6 @@
 package group3.eyemirror;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
+        //Fake data
         times.addAll(Arrays.asList("12:00 am", "1:00 am", "2:00 am", "3:00 am", "4:00 am", "5:00 am", "6:00 am", "7:00 am", "8:00 am", "9:00 am", "10:00 am", "11:00 am", "12:00 pm", "1:00 pm", "2:00 pm", "3:00 pm", "4:00 pm", "5:00 pm", "6:00 pm", "7:00 pm", "8:00 pm", "9:00 pm", "10:00 pm", "11:00 pm"));
         for (int i = 0; i <= 24; i++){
             events.add("");
@@ -42,6 +44,8 @@ public class MainActivity extends AppCompatActivity
         events.add(1, "dsfsdfd sdfdsfdfssdf sdfdsfasdfa sdfasfaadsfdfs dsfsdfdsfdasf adsfdfsasdfadfs dsfasdfadfsdfs sdfsdfadfsa dsfdsfadfsdfs asdfdfsa");
         events.add(9, "dsfsdfd sdfdsfdfssdf sdfdsfasdfa sdfasfaadsfdfs dsfsdfdsfdasf adsfdfsasdfadfs dsfasdfadfsdfs sdfsdfadfsa dsfdsfadfsdfs asdfdfsa");
         events.add(10, "dsfsdfd sdfdsfdfssdf sdfdsfasdfa sdfasfaadsfdfs dsfsdfdsfdasf adsfdfsasdfadfs dsfasdfadfsdfs sdfsdfadfsa dsfdsfadfsdfs asdfdfsa");
+        events.add(15, "dsfsdfd sdfdsfdfssdf sdfdsfasdfa sdfasfaadsfdfs dsfsdfdsfdasf adsfdfsasdfadfs dsfasdfadfsdfs sdfsdfadfsa dsfdsfadfsdfs asdfdfsa");
+
         LinearLayoutManager layout = new LinearLayoutManager(getApplicationContext());
         list.setLayoutManager(layout);
         ListAdapter l = new ListAdapter(MainActivity.this, times, events);
@@ -50,8 +54,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startActivity(new Intent(MainActivity.this, Scheduler.class));
             }
         });
 
@@ -103,15 +106,15 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_scheduler) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_controller) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_notifs) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_settings) {
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_about) {
 
         }
 

@@ -19,7 +19,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Scheduler"></activity>
+        <activity android:name=".Scheduler" />
+        <activity
+            android:name=".MonthlyView"
+            android:label="@string/title_activity_monthly_view"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

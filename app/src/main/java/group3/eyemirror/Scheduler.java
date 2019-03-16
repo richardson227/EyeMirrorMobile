@@ -3,18 +3,15 @@ package group3.eyemirror;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.TimePicker;
-
-import java.util.Calendar;
-import java.util.Date;
+import java.util.ArrayList;
 
 public class Scheduler extends AppCompatActivity {
+    private ArrayList myList;
     private DatePicker datePicker;
     private TimePicker timePicker;
     private EditText event;
@@ -32,6 +29,7 @@ public class Scheduler extends AppCompatActivity {
         submit = (Button) findViewById(R.id.submit);
     }
 
+
     public void submitInfo(View v){
         String eventText = event.getText().toString();
         String descText = desc.getText().toString();
@@ -40,7 +38,10 @@ public class Scheduler extends AppCompatActivity {
         int year = datePicker.getYear();
         int hour = timePicker.getCurrentHour();
         int minute = timePicker.getCurrentMinute();
-        System.out.println("Date: " + month + ":"+day+":"+year + " Time: " + hour + ":" + minute);
-        startActivity(new Intent(Scheduler.this, MainActivity.class));
+        Event newEvent = new Event(eventText, descText, month, day, year, hour, minute);
+        Intent myIntent = new Intent(this, MainActivity.class);
+        myIntent.putExtra("someEvent", newEvent);
+        startActivity(myIntent);
+//        startActivity(new Intent(Scheduler.this, MainActivity.class));
     }
 }

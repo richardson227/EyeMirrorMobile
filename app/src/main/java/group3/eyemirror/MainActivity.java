@@ -3,8 +3,6 @@ package group3.eyemirror;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -16,14 +14,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     ArrayList times = new ArrayList();
-    ArrayList events = new ArrayList();
+    ArrayList<String> schedule = new ArrayList <String>();
+    static ArrayList<Event> events = new ArrayList <Event>();
 
 
     @Override
@@ -34,27 +33,26 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-
         //Fake data
         times.addAll(Arrays.asList("12:00 am", "1:00 am", "2:00 am", "3:00 am", "4:00 am", "5:00 am", "6:00 am", "7:00 am", "8:00 am", "9:00 am", "10:00 am", "11:00 am", "12:00 pm", "1:00 pm", "2:00 pm", "3:00 pm", "4:00 pm", "5:00 pm", "6:00 pm", "7:00 pm", "8:00 pm", "9:00 pm", "10:00 pm", "11:00 pm"));
         for (int i = 0; i <= 24; i++){
-            events.add("");
+            schedule.add("");
         }
-        events.add(1, "dsfsdfd sdfdsfdfssdf sdfdsfasdfa sdfasfaadsfdfs dsfsdfdsfdasf adsfdfsasdfadfs dsfasdfadfsdfs sdfsdfadfsa dsfdsfadfsdfs asdfdfsa");
-        events.add(1, "dsfsdfd sdfdsfdfssdf sdfdsfasdfa sdfasfaadsfdfs dsfsdfdsfdasf adsfdfsasdfadfs dsfasdfadfsdfs sdfsdfadfsa dsfdsfadfsdfs asdfdfsa");
-        events.add(9, "dsfsdfd sdfdsfdfssdf sdfdsfasdfa sdfasfaadsfdfs dsfsdfdsfdasf adsfdfsasdfadfs dsfasdfadfsdfs sdfsdfadfsa dsfdsfadfsdfs asdfdfsa");
-        events.add(10, "dsfsdfd sdfdsfdfssdf sdfdsfasdfa sdfasfaadsfdfs dsfsdfdsfdasf adsfdfsasdfadfs dsfasdfadfsdfs sdfsdfadfsa dsfdsfadfsdfs asdfdfsa");
-        events.add(15, "dsfsdfd sdfdsfdfssdf sdfdsfasdfa sdfasfaadsfdfs dsfsdfdsfdasf adsfdfsasdfadfs dsfasdfadfsdfs sdfsdfadfsa dsfdsfadfsdfs asdfdfsa");
-
+        Bundle extras = getIntent().getExtras();
+        if (extras != null){
+            Event e = (Event)extras.getSerializable("someEvent");
+            events.add(e);
+            schedule = updateSchedule(events, schedule);
+        }
         LinearLayoutManager layout = new LinearLayoutManager(getApplicationContext());
         list.setLayoutManager(layout);
-        ListAdapter l = new ListAdapter(MainActivity.this, times, events);
+        ListAdapter l = new ListAdapter(MainActivity.this, times, schedule);
         list.setAdapter(l);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, Scheduler.class));
+                onSchedulerSelected();
             }
         });
 
@@ -78,11 +76,30 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public ArrayList <String>updateSchedule(ArrayList<Event> events, ArrayList<String>schedule){
+        Calendar cal = Calendar.getInstance();
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int month = cal.get(Calendar.MONTH);
+        int year = cal.get(Calendar.YEAR);
+
+        for (int i = 0; i < events.size(); i++){
+            System.out.print(events.get(i));
+            if (day == events.get(i).getDay() && month == events.get(i).getMonth() && year == events.get(i).getYear()){
+                schedule.set(events.get(i).getHour(), events.get(i).getEventText());
+            }
+        }
+        return schedule;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    public void onSchedulerSelected(){
+        startActivity(new Intent(MainActivity.this, Scheduler.class));
     }
 
     @Override
@@ -107,7 +124,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_scheduler) {
-            // Handle the camera action
+
         } else if (id == R.id.nav_controller) {
 
         } else if (id == R.id.nav_notifs) {

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "692125019894",
+    "firebase_url": "https://eyemirror33.firebaseio.com",
+    "project_id": "eyemirror33",
+    "storage_bucket": "eyemirror33.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:692125019894:android:0feaa149cf31e95b",
+        "android_client_info": {
+          "package_name": "group3.eyemirror"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "692125019894-f2v6qc1l53t58eve7bkc9443oob1i4a0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD54U23IVOmcc6kAcKkMXzl_Kmt2aAPSbk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

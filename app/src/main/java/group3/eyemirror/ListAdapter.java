@@ -56,7 +56,6 @@ public class ListAdapter extends RecyclerView.Adapter <ListAdapter.MyViewHolder>
             // get the reference of item view's
             time = (TextView) itemView.findViewById(R.id.timeView);
             event = (TextView) itemView.findViewById(R.id.eventView);
-
         }
     }
 }

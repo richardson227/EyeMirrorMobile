@@ -38,7 +38,7 @@ public class ListAdapter extends RecyclerView.Adapter <ListAdapter.MyViewHolder>
             @Override
             public void onClick(View view) {
                 // display a toast
-                Toast.makeText(context, timesList.get(position).toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Fuck you", Toast.LENGTH_SHORT).show();
             }
         });
     }

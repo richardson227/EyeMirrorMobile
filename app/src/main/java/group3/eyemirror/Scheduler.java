@@ -11,7 +11,6 @@ import android.widget.TimePicker;
 import java.util.ArrayList;
 
 public class Scheduler extends AppCompatActivity {
-    private ArrayList myList;
     private DatePicker datePicker;
     private TimePicker timePicker;
     private EditText event;
@@ -42,6 +41,5 @@ public class Scheduler extends AppCompatActivity {
         Intent myIntent = new Intent(this, MainActivity.class);
         myIntent.putExtra("someEvent", newEvent);
         startActivity(myIntent);
-//        startActivity(new Intent(Scheduler.this, MainActivity.class));
     }
 }

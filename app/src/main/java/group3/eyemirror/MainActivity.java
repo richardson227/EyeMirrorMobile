@@ -2,9 +2,10 @@ package group3.eyemirror;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,8 +16,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,26 +28,25 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    ArrayList <String> times = new ArrayList<String>();
+    ArrayList<String> times = new ArrayList<String>();
     ArrayList<String> schedule = new ArrayList <String>();
     static ArrayList<Event> events = new ArrayList <Event>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        RecyclerView list = (RecyclerView) findViewById(R.id.recycler);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
-        schedule = populateArrays(times, schedule);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.addTab(tabLayout.newTab().setText("Daily"));
+        tabLayout.addTab(tabLayout.newTab().setText("Monthly"));
+        tabLayout.addTab(tabLayout.newTab().setText("Weekly"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        LinearLayoutManager layout = new LinearLayoutManager(getApplicationContext());
-        list.setLayoutManager(layout);
-        ListAdapter l = new ListAdapter(MainActivity.this, times, schedule);
-        list.setAdapter(l);
+        schedule = populateArrays(times, schedule);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,13 +61,41 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        final FragmentAdapter adapter = new FragmentAdapter
+                (getSupportFragmentManager(), tabLayout.getTabCount());
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("events");
-        myRef.setValue(5);
-    }
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) { }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) { }
+        });
+
+        }
+
+    ValueEventListener v = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            for(DataSnapshot ds : dataSnapshot.getChildren()) {
+                Event someEvent = ds.child("Events").getValue(Event.class);
+                System.out.println(someEvent);
+                events.add(someEvent);
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+        }
+    };
 
     @Override
     public void onBackPressed() {
@@ -82,9 +113,14 @@ public class MainActivity extends AppCompatActivity
             schedule.add("");
         }
 
+
         Bundle extras = getIntent().getExtras();
         if (extras != null){
             Event e = (Event)extras.getSerializable("someEvent");
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("Events");
+            myRef.addListenerForSingleValueEvent(v);
+            myRef.push().setValue(e);
             events.add(e);
             schedule = updateSchedule(events, schedule);
         }
@@ -126,7 +162,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            startActivity(new Intent(MainActivity.this, MonthlyView.class));
         }
 
         return super.onOptionsItemSelected(item);

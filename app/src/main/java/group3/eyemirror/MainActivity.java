@@ -25,6 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.concurrent.CountDownLatch;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initEvents();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -45,8 +47,6 @@ public class MainActivity extends AppCompatActivity
         tabLayout.addTab(tabLayout.newTab().setText("Monthly"));
         tabLayout.addTab(tabLayout.newTab().setText("Weekly"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
-        schedule = populateArrays(times, schedule);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,24 +78,22 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onTabReselected(TabLayout.Tab tab) { }
         });
+        initDailySchedule(schedule);
+        initDailyTimes(times);
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null){
+            System.out.println("Got here");
+            Event e = (Event)extras.getSerializable("someEvent");
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("Events");
+            myRef.push().setValue(e);
+            events.add(e);
+            schedule = updateSchedule(schedule);
+        }
 
         }
 
-    ValueEventListener v = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            for(DataSnapshot ds : dataSnapshot.getChildren()) {
-                Event someEvent = ds.child("Events").getValue(Event.class);
-                System.out.println(someEvent);
-                events.add(someEvent);
-            }
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-        }
-    };
 
     @Override
     public void onBackPressed() {
@@ -107,39 +105,65 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public ArrayList<String> populateArrays(ArrayList<String> times, ArrayList<String> schedule){
+    public void initEvents(){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Events");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                CountDownLatch done = new CountDownLatch(3);
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    done.countDown();
+                    String eventText = (String) ds.child("eventText").getValue();
+                    String eventDesc = (String) ds.child("descText").getValue();
+                    int day = Integer.valueOf(String.valueOf(ds.child("day").getValue()));
+                    int hour = Integer.valueOf(String.valueOf(ds.child("hour").getValue()));
+                    int minute = Integer.valueOf(String.valueOf(ds.child("minute").getValue()));
+                    int month = Integer.valueOf(String.valueOf(ds.child("month").getValue()));
+                    int year = Integer.valueOf(String.valueOf(ds.child("year").getValue()));
+                    Event newEvent = new Event(eventText, eventDesc, month, day, year, hour, minute);
+                    events.add(newEvent);
+                }
+                try {
+                    done.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                System.out.println("err");
+            }
+
+        });
+    }
+    public ArrayList<String> initDailyTimes(ArrayList<String> times) {
         times.addAll(Arrays.asList("12:00 am", "1:00 am", "2:00 am", "3:00 am", "4:00 am", "5:00 am", "6:00 am", "7:00 am", "8:00 am", "9:00 am", "10:00 am", "11:00 am", "12:00 pm", "1:00 pm", "2:00 pm", "3:00 pm", "4:00 pm", "5:00 pm", "6:00 pm", "7:00 pm", "8:00 pm", "9:00 pm", "10:00 pm", "11:00 pm"));
+        return times;
+    }
+
+    public ArrayList<String> initDailySchedule(ArrayList<String> schedule){
         for (int i = 0; i <= 24; i++){
             schedule.add("");
-        }
-
-
-        Bundle extras = getIntent().getExtras();
-        if (extras != null){
-            Event e = (Event)extras.getSerializable("someEvent");
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            DatabaseReference myRef = database.getReference("Events");
-            myRef.addListenerForSingleValueEvent(v);
-            myRef.push().setValue(e);
-            events.add(e);
-            schedule = updateSchedule(events, schedule);
         }
         return schedule;
     }
 
-    public ArrayList<String> updateSchedule(ArrayList<Event> events, ArrayList<String>schedule){
+    public ArrayList<String> updateSchedule(ArrayList<String> schedule){
         Calendar cal = Calendar.getInstance();
         int day = cal.get(Calendar.DAY_OF_MONTH);
         int month = cal.get(Calendar.MONTH);
         int year = cal.get(Calendar.YEAR);
 
         for (int i = 0; i < events.size(); i++){
+            System.out.println(events.get(i).getEventText());
             if (day == events.get(i).getDay() && month == events.get(i).getMonth() && year == events.get(i).getYear()){
                 schedule.set(events.get(i).getHour(), events.get(i).getEventText());
             }
         }
         return schedule;
     }
+
 
 
     @Override
@@ -162,9 +186,12 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            startActivity(new Intent(MainActivity.this, MonthlyView.class));
+            initEvents();
+            for(Event e: events){
+                System.out.println(e.getEventText());
+            };
         }
-
+//
         return super.onOptionsItemSelected(item);
     }
 
@@ -173,11 +200,10 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         if (id == R.id.nav_scheduler) {
             onSchedulerSelected();
         } else if (id == R.id.nav_controller) {
-
+            startActivity(new Intent(MainActivity.this, MirrorController.class));
         } else if (id == R.id.nav_notifs) {
 
         } else if (id == R.id.nav_settings) {

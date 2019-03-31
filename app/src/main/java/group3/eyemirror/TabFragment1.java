@@ -25,7 +25,9 @@ public class TabFragment1 extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         RecyclerView list = (RecyclerView) getView().findViewById(R.id.recycler);
-        schedule = ((MainActivity) getActivity()).populateArrays(times, schedule);
+        times = ((MainActivity) getActivity()).initDailyTimes(times);
+        schedule = ((MainActivity) getActivity()).initDailySchedule(schedule);
+        schedule = ((MainActivity) getActivity()).updateSchedule(schedule);
         LinearLayoutManager layout = new LinearLayoutManager(getActivity());
         list.setLayoutManager(layout);
         ListAdapter l = new ListAdapter(getActivity(), times, schedule);

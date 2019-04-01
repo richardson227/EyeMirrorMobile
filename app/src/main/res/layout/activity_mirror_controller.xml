@@ -7,15 +7,40 @@
 
     <TextView
         android:id="@+id/textView8"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="114dp"
-        android:layout_marginEnd="187dp"
-        android:layout_marginRight="187dp"
-        android:text="Somethin"
+        android:layout_marginTop="120dp"
+        android:text="Mirror Controller"
+        android:textAlignment="center"
+        android:textSize="30sp"
         tools:layout_editor_absoluteX="176dp"
         tools:layout_editor_absoluteY="294dp" />
+
+    <Button
+        android:id="@+id/DailyBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView8"
+        android:layout_marginTop="86dp"
+        android:onClick="dailySubmit"
+        android:text="Change Mirror to Daily View" />
+
+    <Button
+        android:id="@+id/WeeklyBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/DailyBtn"
+        android:layout_marginTop="86dp"
+        android:onClick="weeklySubmit"
+        android:text="Change Mirror to Weekly View" />
+
+    <Button
+        android:id="@+id/MonthlyBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/WeeklyBtn"
+        android:layout_marginTop="86dp"
+        android:onClick="monthlySubmit"
+        android:text="Change Mirror to Monthly View" />
 </RelativeLayout>

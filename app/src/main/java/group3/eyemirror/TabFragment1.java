@@ -15,7 +15,8 @@ import java.util.ArrayList;
 public class TabFragment1 extends Fragment {
     ArrayList<String> times = new ArrayList<String>();
     ArrayList<String> schedule = new ArrayList <String>();
-
+    ArrayList<Event> events = new ArrayList<Event>();
+    public MainActivity activity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -25,17 +26,14 @@ public class TabFragment1 extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         RecyclerView list = (RecyclerView) getView().findViewById(R.id.recycler);
+        LinearLayoutManager layout = new LinearLayoutManager(getActivity());
+        list.setLayoutManager(layout);
         times = ((MainActivity) getActivity()).initDailyTimes(times);
         schedule = ((MainActivity) getActivity()).initDailySchedule(schedule);
         schedule = ((MainActivity) getActivity()).updateSchedule(schedule);
-        LinearLayoutManager layout = new LinearLayoutManager(getActivity());
-        list.setLayoutManager(layout);
-        ListAdapter l = new ListAdapter(getActivity(), times, schedule);
+        ListAdapter l = new ListAdapter(getActivity(), times, schedule, events);
         list.setAdapter(l);
         super.onViewCreated(view, savedInstanceState);
     }
-
-
-
 
 }

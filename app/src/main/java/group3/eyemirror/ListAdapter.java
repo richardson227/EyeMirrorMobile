@@ -11,11 +11,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class ListAdapter extends RecyclerView.Adapter <ListAdapter.MyViewHolder> {
-    ArrayList events;
+    ArrayList schedule;
     ArrayList timesList;
+    ArrayList<Event> events = new ArrayList<Event>();
     Context context;
-    public ListAdapter(Context context, ArrayList times, ArrayList events) {
+
+    public ListAdapter(Context context, ArrayList times, ArrayList schedule, ArrayList<Event> events) {
         this.context = context;
+        this.schedule = schedule;
         this.events = events;
         this.timesList = times;
     }
@@ -32,13 +35,13 @@ public class ListAdapter extends RecyclerView.Adapter <ListAdapter.MyViewHolder>
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         // set the data in items
         holder.time.setText(timesList.get(position).toString());
-        holder.event.setText(events.get(position).toString());
+        holder.event.setText(schedule.get(position).toString());
         // implement setOnClickListener event on item view.
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // display a toast
-                Toast.makeText(context, "Event text here", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, timesList.get(position).toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }

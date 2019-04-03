@@ -16,8 +16,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class TabFragment2 extends Fragment {
+public class MonthlyView extends Fragment {
     TextView eventText;
+    ArrayList<Event>schedule = new ArrayList<Event>();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.tab_fragment_2, container, false);
@@ -30,8 +31,8 @@ public class TabFragment2 extends Fragment {
         TextView date = (TextView) getView().findViewById(R.id.monthlyDate);
         eventText = (TextView) getView().findViewById(R.id.monthlyEvents);
         eventText.setMovementMethod(new ScrollingMovementMethod());
-        Calendar cal = Calendar.getInstance();
         ArrayList <Event> events = ((MainActivity) getActivity()).getEventsList();
+        Calendar cal = Calendar.getInstance();
         int curDay = cal.get(Calendar.DAY_OF_MONTH);
         int curMonth = cal.get(Calendar.MONTH);
         int curYear = cal.get(Calendar.YEAR);
@@ -51,10 +52,13 @@ public class TabFragment2 extends Fragment {
 
     public ArrayList<Event> updateSchedule(int day, int month, int year, TextView eventText){
         eventText.setText("");
-        ArrayList<Event>schedule = new ArrayList<Event>();
+        schedule.clear();
         ArrayList <Event> events = ((MainActivity) getActivity()).getEventsList();
+        String hour;
+        String minute;
         for (int i = 0; i < events.size(); i++){
             if (day == events.get(i).getDay() && month == events.get(i).getMonth() && year == events.get(i).getYear()){
+
                 schedule.add(events.get(i));
             }
         }
@@ -63,9 +67,24 @@ public class TabFragment2 extends Fragment {
                 return e1.getHour() - e2.getHour();
             }
         });
+
         for(Event e : schedule){
-            eventText.append(e.getHour()+":"+e.getMinute()+"- "+e.getEventText()+"\n"+e.getDescText()+"\n\n");
+            if (e.getHour() > 12 ){
+                hour = "" + (e.getHour() - 12);
+            } else if (e.getHour() == 0){
+                hour = "12";
+            } else {
+                hour = "" + e.getHour();
+            }
+
+            if (e.getMinute() < 10){
+                minute = "0" + e.getMinute();
+            } else {
+                minute = "" + e.getMinute();
+            }
+            eventText.append(hour+":"+minute+"- "+e.getEventText()+"\n"+e.getDescText()+"\n\n");
         }
+
         if (schedule.size() == 0){
             eventText.setText("No events scheduled");
         }

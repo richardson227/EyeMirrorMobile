@@ -8,7 +8,6 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
-import java.util.ArrayList;
 
 public class Scheduler extends AppCompatActivity {
     private DatePicker datePicker;

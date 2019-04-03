@@ -2,7 +2,6 @@ package group3.eyemirror;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -24,20 +23,21 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.concurrent.CountDownLatch;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    ArrayList<String> times = new ArrayList<String>();
-    ArrayList<String> schedule = new ArrayList <String>();
     static ArrayList<Event> events = new ArrayList <Event>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initEvents();
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -45,8 +45,8 @@ public class MainActivity extends AppCompatActivity
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Daily"));
-        tabLayout.addTab(tabLayout.newTab().setText("Monthly"));
         tabLayout.addTab(tabLayout.newTab().setText("Weekly"));
+        tabLayout.addTab(tabLayout.newTab().setText("Monthly"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -84,8 +84,6 @@ public class MainActivity extends AppCompatActivity
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference("Events");
             myRef.push().setValue(e);
-            System.out.println("bundle");
-            events.add(e);
         }
 
         }
@@ -102,7 +100,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void initEvents(){
-        System.out.println("initEvents");
         events.clear();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Events");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -134,47 +131,10 @@ public class MainActivity extends AppCompatActivity
         });
 
     }
-    public ArrayList<String> initDailyTimes(ArrayList<String> times) {
-        times.clear();
-        times.addAll(Arrays.asList("12:00 am", "1:00 am", "2:00 am", "3:00 am", "4:00 am", "5:00 am", "6:00 am", "7:00 am", "8:00 am", "9:00 am", "10:00 am", "11:00 am", "12:00 pm", "1:00 pm", "2:00 pm", "3:00 pm", "4:00 pm", "5:00 pm", "6:00 pm", "7:00 pm", "8:00 pm", "9:00 pm", "10:00 pm", "11:00 pm"));
-        return times;
-    }
-
-    public ArrayList<String> initDailySchedule(ArrayList<String> schedule){
-        schedule.clear();
-        for (int i = 0; i <= 24; i++){
-            schedule.add("");
-        }
-        return schedule;
-    }
 
     public ArrayList<Event> getEventsList(){
-        System.out.println(events.size());
         return events;
     }
-
-    public ArrayList<String> getTimes() {
-        return times;
-    }
-
-    public ArrayList<String> getSchedule() {
-        return schedule;
-    }
-
-    public ArrayList<String> updateSchedule(ArrayList<String> schedule){
-        schedule = initDailySchedule(schedule);
-        Calendar cal = Calendar.getInstance();
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        int month = cal.get(Calendar.MONTH);
-        int year = cal.get(Calendar.YEAR);
-        for (int i = 0; i < events.size(); i++){
-            if (day == events.get(i).getDay() && month == events.get(i).getMonth() && year == events.get(i).getYear()){
-                schedule.set(events.get(i).getHour(), events.get(i).getEventText());
-            }
-        }
-        return schedule;
-    }
-
 
 
     @Override
@@ -203,7 +163,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -219,7 +178,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_about) {
 
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

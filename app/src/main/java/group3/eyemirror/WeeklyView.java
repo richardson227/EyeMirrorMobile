@@ -30,12 +30,17 @@ public class WeeklyView extends Fragment {
         LinearLayoutManager layout = new LinearLayoutManager(getActivity());
         TextView tv = (TextView)getView().findViewById(R.id.heading);
         Calendar cal = Calendar.getInstance();
-        int curMonth = cal.get(Calendar.MONTH);
-        int firstDayOfWk = cal.getFirstDayOfWeek();
-        cal.set(Calendar.DATE, firstDayOfWk);
-        cal.add(Calendar.DATE, 6);
-        int lastDayOfWk = cal.get(Calendar.DATE);
-        tv.setText("Week of" + "=" + firstDayOfWk + " - " + lastDayOfWk);
+        // Get calendar set to current date and time
+        Calendar c = Calendar.getInstance();
+
+    // Set the calendar to monday of the current week
+        c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        int startOfWk = c.get(Calendar.DAY_OF_MONTH);
+        int startMonth = c.get(Calendar.MONTH) +1;
+        c.add(Calendar.DATE, 7);
+        int endOfWk = c.get(Calendar.DAY_OF_MONTH);
+        int endMonth = c.get(Calendar.MONTH) +1;
+        tv.setText("Week of " + startMonth + "/" + startOfWk + " to " + endMonth  + "/" + endOfWk);
         list.setLayoutManager(layout);
         events = ((MainActivity) getActivity()).getEventsList();
         days = initWeeklyDays(days);
@@ -61,25 +66,16 @@ public class WeeklyView extends Fragment {
     }
 
     public ArrayList<String> updateSchedule(ArrayList<String> schedule){
-        System.out.println("here");
         Calendar cal = Calendar.getInstance();
-        int firstDayOfWk = cal.getFirstDayOfWeek();
-        cal.set(Calendar.DATE, firstDayOfWk);
-        int month = cal.get(Calendar.MONTH);
-        int year = cal.get(Calendar.YEAR);
-        int lastDayofMonth = cal.getActualMaximum(Calendar.DATE);
-        cal.add(Calendar.DATE, 6);
-        int lastDayOfWk = cal.get(Calendar.DATE);
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
         String hour;
         String minute;
-        int iter = firstDayOfWk;
-        int curDayOfWk = 0;
-        while (iter != lastDayOfWk){
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        for (int count = 0; count < 7; count++) {
         for (int i = 0; i < events.size(); i++) {
-                System.out.println(events.get(i).getMonth() + "/" + events.get(i).getDay() + "/" + events.get(i).getYear() +
-                "compared with " + month + "/" + iter + "/" + year);
-                if (iter == events.get(i).getDay() && month == events.get(i).getMonth() && year == events.get(i).getYear()) {
-                    String temp = schedule.get(curDayOfWk);
+                if (c.get(Calendar.DAY_OF_MONTH) == events.get(i).getDay() && (c.get(Calendar.MONTH) + 1) == events.get(i).getMonth() && c.get(Calendar.YEAR) == events.get(i).getYear()) {
+                    String temp = schedule.get(count);
 
                     if (events.get(i).getHour() > 12) {
                         hour = "" + (events.get(i).getHour() - 12);
@@ -94,23 +90,11 @@ public class WeeklyView extends Fragment {
                     } else {
                         minute = "" + events.get(i).getMinute();
                     }
-
-
                     temp = temp + (hour + ":" + minute + " - " + events.get(i).getEventText() + "\n" + events.get(i).getDescText() + "\n");
-                    schedule.set(curDayOfWk, temp);
+                    schedule.set(count, temp);
                 }
         }
-            curDayOfWk++;
-            iter++;
-            if (iter > lastDayofMonth){
-                iter = 1;
-                month++;
-                if (month > 12){
-                    month = 1;
-                    year++;
-                }
-            }
-
+            c.add(Calendar.DATE, 1);
         }
         return schedule;
     }

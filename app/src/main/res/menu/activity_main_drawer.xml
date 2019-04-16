@@ -13,10 +13,6 @@
             android:icon="@drawable/ic_settings_remote_black_24dp"
             android:title="Mirror Controller" />
         <item
-            android:id="@+id/nav_notifs"
-            android:icon="@drawable/ic_add_alert_black_24dp"
-            android:title="Notification Preferences" />
-        <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings_black_24dp"
             android:title="Settings" />

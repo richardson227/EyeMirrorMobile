@@ -23,7 +23,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.concurrent.CountDownLatch;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -73,7 +72,6 @@ public class MainActivity extends AppCompatActivity
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
             }
-
             @Override
             public void onTabUnselected(TabLayout.Tab tab) { }
 
@@ -85,7 +83,12 @@ public class MainActivity extends AppCompatActivity
             Event e = (Event)extras.getSerializable("someEvent");
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference myRef = database.getReference("Events");
-            myRef.push().setValue(e);
+            if (events.size() != 0){
+                if (e != events.get(events.size()-1)){
+                    myRef.push().setValue(e);
+                    events.add(e);
+                }
+            }
         }
 
         }
@@ -102,14 +105,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void initEvents(){
-        events.clear();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Events");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                CountDownLatch done = new CountDownLatch(1);
+                if (events.size() == 0){
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    done.countDown();
                     String eventText = (String) ds.child("eventText").getValue();
                     String eventDesc = (String) ds.child("descText").getValue();
                     int day = Integer.valueOf(String.valueOf(ds.child("day").getValue()));
@@ -120,10 +121,6 @@ public class MainActivity extends AppCompatActivity
                     Event newEvent = new Event(eventText, eventDesc, month, day, year, hour, minute);
                     events.add(newEvent);
                 }
-                try {
-                    done.await();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
             @Override
@@ -173,8 +170,6 @@ public class MainActivity extends AppCompatActivity
             onSchedulerSelected();
         } else if (id == R.id.nav_controller) {
             startActivity(new Intent(MainActivity.this, MirrorController.class));
-        } else if (id == R.id.nav_notifs) {
-
         } else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_about) {

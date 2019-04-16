@@ -32,7 +32,7 @@ public class Scheduler extends AppCompatActivity {
         String eventText = event.getText().toString();
         String descText = desc.getText().toString();
         int day = datePicker.getDayOfMonth();
-        int month = datePicker.getMonth();
+        int month = datePicker.getMonth() + 1;
         int year = datePicker.getYear();
         int hour = timePicker.getCurrentHour();
         int minute = timePicker.getCurrentMinute();

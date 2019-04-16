@@ -34,7 +34,7 @@ public class MonthlyView extends Fragment {
         ArrayList <Event> events = ((MainActivity) getActivity()).getEventsList();
         Calendar cal = Calendar.getInstance();
         int curDay = cal.get(Calendar.DAY_OF_MONTH);
-        int curMonth = cal.get(Calendar.MONTH);
+        int curMonth = cal.get(Calendar.MONTH) +1;
         int curYear = cal.get(Calendar.YEAR);
         date.setText(curMonth+"/"+curDay+"/"+curYear);
         updateSchedule(curDay, curMonth, curYear, eventText);
@@ -44,7 +44,7 @@ public class MonthlyView extends Fragment {
                                             int dayOfMonth) {
                 TextView date = (TextView) getView().findViewById(R.id.monthlyDate);
                 date.setText(month+"/"+dayOfMonth+"/"+year);
-                updateSchedule(dayOfMonth, month, year, eventText);
+                updateSchedule(dayOfMonth, month + 1, year, eventText);
             }
         });
 
@@ -58,7 +58,6 @@ public class MonthlyView extends Fragment {
         String minute;
         for (int i = 0; i < events.size(); i++){
             if (day == events.get(i).getDay() && month == events.get(i).getMonth() && year == events.get(i).getYear()){
-
                 schedule.add(events.get(i));
             }
         }

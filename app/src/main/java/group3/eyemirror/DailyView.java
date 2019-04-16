@@ -32,12 +32,11 @@ public class DailyView extends Fragment {
         TextView tv = (TextView)getView().findViewById(R.id.heading);
         Calendar cal = Calendar.getInstance();
         int curDay = cal.get(Calendar.DAY_OF_MONTH);
-        int curMonth = cal.get(Calendar.MONTH);
+        int curMonth = cal.get(Calendar.MONTH) + 1;
         int curYear = cal.get(Calendar.YEAR);
         tv.setText(curMonth+"/"+curDay+"/"+curYear);
         list.setLayoutManager(layout);
         times = initDailyTimes(times);
-        schedule = initDailySchedule(schedule);
         events = ((MainActivity) getActivity()).getEventsList();
         schedule = updateSchedule(schedule);
         ListAdapter l = new ListAdapter(getActivity(), times, schedule, events);
@@ -60,32 +59,15 @@ public class DailyView extends Fragment {
     }
 
     public ArrayList<String> updateSchedule(ArrayList<String> schedule){
+        initDailySchedule(schedule);
         Calendar cal = Calendar.getInstance();
         int day = cal.get(Calendar.DAY_OF_MONTH);
-        int month = cal.get(Calendar.MONTH);
+        int month = cal.get(Calendar.MONTH) + 1;
         int year = cal.get(Calendar.YEAR);
-        String hour;
-        String minute;
         for (int i = 0; i < events.size(); i++){
             if (day == events.get(i).getDay() && month == events.get(i).getMonth() && year == events.get(i).getYear()){
                 String temp = schedule.get(events.get(i).getHour());
-
-                if (events.get(i).getHour() > 12 ){
-                    hour = "" + (events.get(i).getHour() - 12);
-                } else if (events.get(i).getHour() == 0){
-                    hour = "12";
-                } else {
-                    hour = "" + events.get(i).getHour();
-                }
-
-                if (events.get(i).getMinute() < 10){
-                    minute = "0" + events.get(i).getMinute();
-                } else {
-                    minute = "" + events.get(i).getMinute();
-                }
-
-
-                temp = temp + (hour + ":" + minute + " - " + events.get(i).getEventText()+"\n");
+                temp = temp + (events.get(i).getEventText()+"\n");
                 schedule.set(events.get(i).getHour(), temp);
             }
         }
